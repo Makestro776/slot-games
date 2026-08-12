@@ -57,7 +57,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## 現状のステータス
 
 - Vite(vanilla-ts) + Phaser のスキャフォールド完了、ビルド確認済み
-- Gitリポジトリ初期化済み(`main` ブランチ)、まだコミット・GitHub側のリポジトリ作成/pushは未実施
+- GitHubリポジトリ作成・push・GitHub Pages公開まで完了。公開URL: https://makestro776.github.io/slot-games/ (リポジトリ: https://github.com/Makestro776/slot-games 、`main` へのpushで自動デプロイ)
 - 実装済みは空のリール窓の描画のみ。回転アニメーション・ストップ入力・内部抽選ロジックはこれから
 - 対象機種・移植元データ(slot_demeeditの `data/machines/` を使うか、新規に用意するか)は未確定
 
