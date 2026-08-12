@@ -8,13 +8,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 単なる出目の静止画表示ではなく、実際に「回転→ストップボタンで停止→内部抽選結果に応じた滑りコマ数で止まる」という一連のゲームプレイをブラウザ上で再現することを目指す。
 
-## 姉妹プロジェクトとの関係
+## 姉妹プロジェクトとの関係(参考にしない)
 
-[../slot_demeedit/](../slot_demeedit/)(別ディレクトリ、Electron製ローカルアプリ)は、雑誌等の画像から切り出した実機の絵柄素材を編集・出目表示するツール。本プロジェクトとは以下の関係を想定している。
-
-- 絵柄画像素材(`data/machines/<machine-id>/symbols/*.png`)や機種データ構造(`machine.json`)は、本プロジェクトでも再利用・拡張できる可能性が高い
-- ただしslot_demeeditは「出目を手動で組んで表示・キャプチャーする」ツールであり、内部抽選やリール回転の実装は持たない。本プロジェクトはそこに「実際に回転して抽選結果で止まる」というゲームロジックを追加するもの
-- 機種データのスキーマを共通化する場合は、変更がslot_demeedit側の仕様(`data/machines/schema.json`)にも影響することに注意する
+[../slot_demeedit/](../slot_demeedit/)(別ディレクトリ、Electron製ローカルアプリ)は、雑誌等の画像から切り出した実機の絵柄素材を編集・出目表示するツール。当初は絵柄画像・機種データ構造の流用を検討したが、**本プロジェクトでは使わないことに決定**。機種データ・絵柄素材は本プロジェクト独自に用意する。
 
 ## 技術スタック(決定事項)
 
@@ -44,13 +40,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## 実装時の方針(今後コードを書く際の指針)
 
 - 実機の内部抽選(確率テーブル・設定差)を再現する場合、当たり判定ロジックと描画(Phaserのシーン)はできるだけ分離する。抽選ロジックは単体テストしやすい純粋なTypeScriptモジュールとして書く
-- 機種ごとのデータ(絵柄・配列・確率)は `machine.json` 的なデータファイルに外出しし、コードにハードコードしない。slot_demeeditのデータ構造との親和性を意識する
-- 絵柄画像などの素材は、実機の絵柄デザインを大幅に改変しないこと(slot_demeeditと同じ制約)
+- 機種ごとのデータ(絵柄・配列・確率)は `machine.json` 的なデータファイルに外出しし、コードにハードコードしない
 
 ## プロジェクト構成
 
 - [src/main.ts](src/main.ts) — エントリーポイント。`Phaser.Game` を生成し `MainScene` を登録する
 - [src/scenes/MainScene.ts](src/scenes/MainScene.ts) — 最初のシーン。現状は3×3のリール窓の枠(プレースホルダー)を描画するのみで、回転・停止・抽選ロジックは未実装
+- [public/assets/symbols/](public/assets/symbols/) — 絵柄画像の置き場所(ユーザーが用意する)。ここに置いたファイルはビルド後もパスを保ったまま `dist/assets/symbols/` に配置される。Phaserからロードする際はVite側の `base`(`/slot-games/`)を考慮し、`import.meta.env.BASE_URL` を先頭に付けたパスを使うこと(例: `` `${import.meta.env.BASE_URL}assets/symbols/seven.png` ``)
 - [vite.config.ts](vite.config.ts) — GitHub Pages公開用に `base` を設定
 - [.github/workflows/deploy.yml](.github/workflows/deploy.yml) — `main` push時にビルドしGitHub Pagesへ自動デプロイ
 
@@ -59,7 +55,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Vite(vanilla-ts) + Phaser のスキャフォールド完了、ビルド確認済み
 - GitHubリポジトリ作成・push・GitHub Pages公開まで完了。公開URL: https://makestro776.github.io/slot-games/ (リポジトリ: https://github.com/Makestro776/slot-games 、`main` へのpushで自動デプロイ)
 - 実装済みは空のリール窓の描画のみ。回転アニメーション・ストップ入力・内部抽選ロジックはこれから
-- 対象機種・移植元データ(slot_demeeditの `data/machines/` を使うか、新規に用意するか)は未確定
+- 対象機種・絵柄素材は未確定(オリジナルの架空機種にするか、実機を新規に素材化するかは今後決める)
 
 ## Commands
 
